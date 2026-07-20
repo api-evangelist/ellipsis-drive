@@ -1,0 +1,31 @@
+generated: '2026-07-19'
+method: searched
+source: https://docs.ellipsis-drive.com/developers/api-v3
+docs: https://docs.ellipsis-drive.com/developers/api-v3/oauth/authorization
+summary:
+  types: [http, oauth2]
+  http_scheme: bearer
+  oauth2_flows: [authorizationCode]
+  notes: >-
+    Requests authenticate with a Bearer access token in the Authorization header. Tokens can be
+    created and managed under the account (personal access tokens) or obtained via the OAuth2
+    authorization-code flow (PKCE supported) for third-party integrations.
+schemes:
+- name: bearerAuth
+  type: http
+  scheme: bearer
+  description: >-
+    Personal or OAuth-issued access token passed as `Authorization: Bearer <token>`. Personal
+    access tokens are managed at Account > Access tokens.
+  docs: https://docs.ellipsis-drive.com/developers/api-v3/account/access-tokens
+  sources: [docs]
+- name: oauth2
+  type: oauth2
+  description: OAuth2 authorization-code flow (PKCE supported) for delegated third-party access.
+  flows:
+  - flow: authorizationCode
+    authorizationUrl: https://api.ellipsis-drive.com/v3/oauth/authorize
+    scopes:
+      projects: Allows the use of all API calls except those in /settings/account (default and currently the only scope).
+  docs: https://docs.ellipsis-drive.com/developers/api-v3/oauth/authorization
+  sources: [docs]
