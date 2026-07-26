@@ -1,0 +1,83 @@
+generated: '2026-07-19'
+method: searched
+source: https://github.com/ellipsis-drive + npm/PyPI registries
+packages:
+- language: python
+  registry: pypi
+  name: ellipsis
+  url: https://pypi.org/project/ellipsis/
+  install: pip install ellipsis
+  repo: https://github.com/ellipsis-drive/python-package
+  official: true
+  description: Official Python SDK wrapping the Ellipsis Drive API.
+- language: python
+  registry: github
+  name: pythonAI-package
+  url: https://github.com/ellipsis-drive/pythonAI-package
+  official: true
+  description: AI-focused Python SDK for Ellipsis Drive (MIT).
+- language: python
+  registry: github
+  name: pySpark
+  url: https://github.com/ellipsis-drive/pySpark
+  official: true
+  description: Apache Spark integration for Ellipsis Drive.
+- language: r
+  registry: github
+  name: R-package
+  url: https://github.com/ellipsis-drive/R-package
+  official: true
+  description: Official R SDK for Ellipsis Drive.
+- language: javascript
+  registry: npm
+  name: ellipsis-js-util
+  url: https://www.npmjs.com/package/ellipsis-js-util
+  install: npm install ellipsis-js-util
+  repo: https://github.com/ellipsis-drive/ellipsis-js-util
+  official: true
+  description: Base classes and functions for connecting with and using Ellipsis Drive.
+- language: javascript
+  registry: npm
+  name: leaflet-ellipsis
+  url: https://www.npmjs.com/package/leaflet-ellipsis
+  install: npm install leaflet-ellipsis
+  repo: https://github.com/ellipsis-drive/leaflet-package
+  official: true
+  description: Use Ellipsis Drive layers in Leaflet projects.
+- language: javascript
+  registry: npm
+  name: react-leaflet-ellipsis
+  url: https://www.npmjs.com/package/react-leaflet-ellipsis
+  install: npm install react-leaflet-ellipsis
+  repo: https://github.com/ellipsis-drive/react-leaflet-package
+  official: true
+  description: Use Ellipsis Drive layers with react-leaflet.
+- language: javascript
+  registry: npm
+  name: mapboxgljs-ellipsis
+  url: https://www.npmjs.com/package/mapboxgljs-ellipsis
+  install: npm install mapboxgljs-ellipsis
+  repo: https://github.com/ellipsis-drive/mapboxgljs-package
+  official: true
+  description: Import Ellipsis Drive layers into Mapbox GL JS maps.
+- language: javascript
+  registry: npm
+  name: arcgisjs-ellipsis
+  url: https://www.npmjs.com/package/arcgisjs-ellipsis
+  install: npm install arcgisjs-ellipsis
+  repo: https://github.com/ellipsis-drive/arcgisjs-package
+  official: true
+  description: Integrate the ArcGIS JS API with Ellipsis Drive.
+plugins:
+- name: qgis-plugin
+  url: https://github.com/ellipsis-drive/qgis-plugin
+  host: QGIS
+  official: true
+- name: arcgispro-addin
+  url: https://github.com/ellipsis-drive/arcgispro-addin
+  host: ArcGIS Pro
+  official: true
+- name: ellipsis-drive-powerbi-visual
+  url: https://github.com/ellipsis-drive/ellipsis-drive-powerbi-visual
+  host: Power BI
+  official: true

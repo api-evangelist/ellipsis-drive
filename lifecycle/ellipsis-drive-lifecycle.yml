@@ -1,0 +1,19 @@
+generated: '2026-07-19'
+method: searched
+source: https://docs.ellipsis-drive.com/developers/api-v3
+versioning:
+  scheme: uri-path
+  current: v3
+  base_url: https://api.ellipsis-drive.com/v3
+  docs: https://docs.ellipsis-drive.com/developers/api-v3
+deprecation:
+  policy_url: null
+  sunset_header: false
+  notes: No published deprecation policy or RFC 8594 Sunset/Deprecation header support found.
+sla:
+  url: null
+status_page: null
+notes: >-
+  API is versioned in the URI path (v3). No dedicated public status page
+  (status.ellipsis-drive.com did not resolve) or formal deprecation policy was found at the time
+  of enrichment; absence recorded as valid data.

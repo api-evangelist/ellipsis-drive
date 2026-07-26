@@ -1,20 +1,69 @@
 aid: ellipsis-drive
 name: Ellipsis Drive
-description: Ellipsis Drive is a company surfaced as a portfolio company of techstars and added to the
-  API Evangelist network as a stub for enrichment. This profile is a lead awaiting the enrichment pipeline.
+description: >-
+  Ellipsis Drive is a cloud-native spatial data management platform that lets teams upload,
+  store, process, share, and serve raster, vector, and 3D point-cloud geospatial data through a
+  single interoperable interface. Uploaded files are automatically processed into high-performance
+  Tile Pyramid Archives (rasters) and Paged Vector Tiles (vectors) and served through standard OGC
+  protocols (WMS, WMTS, WFS, WCS, XYZ, and vector tiles) alongside a REST API v3 with Bearer-token
+  and OAuth2 authorization. Official SDKs and integrations cover Python, R, and JavaScript, plus
+  plugins for QGIS, ArcGIS (JS, Pro, and Server), Mapbox GL, Leaflet, React-Leaflet, and Power BI.
+  The platform offers storage-based pricing, license-free data sharing and consumption,
+  subscriptions for selling spatial data, and both instant SaaS and private self-hosted deployments.
 url: https://raw.githubusercontent.com/api-evangelist/ellipsis-drive/refs/heads/main/apis.yml
+accessModel:
+  pricing: unknown
+  onboarding: self-serve
+  trial: false
+  try_now: false
+  public: false
+  label: Self-serve signup
+  confidence: medium
+  source:
+  - authentication
+  generated: '2026-07-22'
+  method: derived
+image: https://ellipsis-drive.com/ogImages/homepageHeaderImage.png
 x-type: company
 x-source: vc-portfolio
 x-backed-by:
 - techstars
-x-tier: stub
-x-tier-reason: portfolio-lead
+x-tier: enriched
+x-tier-reason: portfolio-lead-enriched
 specificationVersion: '0.20'
 created: '2026-07-17'
-modified: '2026-07-17'
+modified: '2026-07-19'
 tags:
 - Company
-apis: []
+- Geospatial
+- Spatial Data
+- GIS
+- Mapping
+- Data Management
+- Raster
+- Vector
+- OGC
+- Cloud Storage
+- Remote Sensing
+apis:
+- name: Ellipsis Drive API v3
+  description: >-
+    The Ellipsis Drive API v3 provides programmatic access to manage, use, and integrate spatial
+    data: accounts and organizations, users, folders/paths, maps, vector and raster layers, point
+    clouds, access tokens, OAuth authorization, and OGC protocol integration (WMS, WMTS, WFS, WCS,
+    XYZ, vector tiles).
+  humanURL: https://docs.ellipsis-drive.com/developers/api-v3
+  baseURL: https://api.ellipsis-drive.com/v3
+  tags:
+  - Geospatial
+  - Spatial Data
+  - GIS
+  - OGC
+  properties:
+  - type: APIReference
+    url: https://docs.ellipsis-drive.com/developers/api-v3
+  - type: Authentication
+    url: https://docs.ellipsis-drive.com/developers/api-v3/oauth/authorization
 maintainers:
 - FN: Kin Lane
   email: kin@apievangelist.com
@@ -23,3 +72,48 @@ maintainers:
 common:
 - type: Website
   url: https://ellipsis-drive.com/
+- type: DeveloperPortal
+  url: https://docs.ellipsis-drive.com/developers/api-v3
+- type: Documentation
+  url: https://docs.ellipsis-drive.com/
+- type: APIReference
+  url: https://docs.ellipsis-drive.com/developers/api-v3
+- type: GettingStarted
+  url: https://docs.ellipsis-drive.com/getting-started/quick-start
+- type: Support
+  url: https://ellipsis-drive.com/contact/
+- type: Blog
+  url: https://ellipsis-drive.com/blogs/
+- type: GitHubOrganization
+  url: https://github.com/ellipsis-drive
+- type: Pricing
+  url: https://ellipsis-drive.com/getting-started/
+- type: SignUp
+  url: https://app.ellipsis-drive.com/register
+- type: Login
+  url: https://app.ellipsis-drive.com/login
+- type: TermsOfService
+  url: https://ellipsis-drive.com/terms/
+- type: PrivacyPolicy
+  url: https://ellipsis-drive.com/privacy/
+- type: Authentication
+  url: authentication/ellipsis-drive-authentication.yml
+- type: OAuthScopes
+  url: scopes/ellipsis-drive-scopes.yml
+- type: Packages
+  url: packages/ellipsis-drive-packages.yml
+- type: SDKs
+  url: packages/ellipsis-drive-packages.yml
+- type: LLMsTxt
+  url: llms/ellipsis-drive-llms.txt
+- type: Conformance
+  url: conformance/ellipsis-drive-conformance.yml
+- type: Lifecycle
+  url: lifecycle/ellipsis-drive-lifecycle.yml
+- type: DomainSecurity
+  url: security/ellipsis-drive-domain-security.yml
+x-enrichment:
+  date: '2026-07-19'
+  status: backfilled
+  pass: local-v1
+  note: backfilled from .gitignore signal + verified work evidence

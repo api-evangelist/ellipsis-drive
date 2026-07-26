@@ -1,0 +1,17 @@
+generated: '2026-07-19'
+method: searched
+source: https://docs.ellipsis-drive.com/developers/api-v3/oauth/authorization
+docs: https://docs.ellipsis-drive.com/developers/api-v3/oauth/authorization
+schemes:
+- name: oauth2
+  source: docs
+  flows:
+  - flow: authorizationCode
+    authorizationUrl: https://api.ellipsis-drive.com/v3/oauth/authorize
+scopes:
+- scope: projects
+  description: >-
+    Allows the use of all API calls except those in /settings/account. This is the default and
+    currently the only supported OAuth scope.
+  flows: [authorizationCode]
+  sources: [docs]

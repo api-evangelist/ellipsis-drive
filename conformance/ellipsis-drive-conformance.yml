@@ -1,0 +1,36 @@
+generated: '2026-07-19'
+method: searched
+source: https://docs.ellipsis-drive.com/developers/api-v3/ogc-protocols + https://ellipsis-drive.com/
+standards:
+- id: ogc-wms
+  name: OGC Web Map Service (WMS)
+  conforms: true
+  evidence: Ellipsis Drive serves layers over WMS as a documented OGC protocol.
+- id: ogc-wmts
+  name: OGC Web Map Tile Service (WMTS)
+  conforms: true
+  evidence: WMTS listed as a supported OGC protocol.
+- id: ogc-wfs
+  name: OGC Web Feature Service (WFS)
+  conforms: true
+  evidence: WFS listed as a supported OGC protocol.
+- id: ogc-wcs
+  name: OGC Web Coverage Service (WCS)
+  conforms: true
+  evidence: WCS listed as a supported OGC protocol.
+- id: ogc-xyz-tiles
+  name: XYZ / slippy-map tiles
+  conforms: true
+  evidence: XYZ tile endpoints published for rendered layers.
+- id: ogc-vector-tiles
+  name: OGC/Mapbox Vector Tiles
+  conforms: true
+  evidence: Paged Vector Tiles served for vector layers.
+- id: oauth2
+  name: OAuth 2.0
+  conforms: true
+  evidence: OAuth2 authorization-code flow (PKCE) documented for the API.
+- id: rfc9457-problem-details
+  name: RFC 9457 Problem Details
+  conforms: false
+  evidence: No application/problem+json error envelope documented.
