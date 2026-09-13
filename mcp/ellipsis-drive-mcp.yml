@@ -1,0 +1,55 @@
+generated: '2026-09-11'
+method: probed
+source: https://mcp.ellipsis-drive.com/
+status: published
+server:
+  name: ellipsis-drive
+  transport: http
+  url: https://mcp.ellipsis-drive.com/
+deployment:
+  mode: remote
+  endpoint: https://mcp.ellipsis-drive.com/
+  verified: probed
+  probe: live
+  checked: '2026-09-11'
+  source: docs-check 2026-09-12 (endpoint found in the provider's own documentation, then probed)
+tools_count: 18
+tools:
+- name: create_compute_task
+  description: ''
+- name: execute_compute_task
+  description: ''
+- name: get_compute_task
+  description: ''
+- name: download_partial_result_compute_task
+  description: ''
+- name: terminate_compute_task
+  description: ''
+- name: get_path_info
+  description: ''
+- name: path_get_info
+  description: ''
+- name: path_get_thumbnail
+  description: ''
+- name: create_raster_path
+  description: ''
+- name: create_raster_timestamp
+  description: ''
+- name: location_vector
+  description: ''
+- name: path_raster_get_uploads
+  description: ''
+- name: get_compute_tasks
+  description: ''
+- name: path_list_folder
+  description: ''
+- name: analyse_raster
+  description: ''
+- name: path_search
+  description: ''
+- name: features_by_extent
+  description: ''
+- name: user_list_root
+  description: ''
+tools_source: live tools/list via initialize handshake, 2026-09-12 (signals/audit_mcp_authorship.py --probe)
+authorship: provider
