@@ -16,40 +16,46 @@ deployment:
 tools_count: 18
 tools:
 - name: create_compute_task
-  description: ''
+  description: Creates a compute task environment with the given specification. It usually takes up to
+    a few minutes for the requested environment to be prepared.
 - name: execute_compute_task
-  description: ''
+  description: Executes a python function on the created compute environment.      Depending on the complexity
+    of the code and the input/output data sizes this can either resolve in minutes to hours.     This
+    tool will move the compute task to processing,
 - name: get_compute_task
-  description: ''
+  description: Returns detailed information on the given compute task
 - name: download_partial_result_compute_task
-  description: ''
+  description: Downloads a file with part of the compute task result when largeResult is true. The file
+    ids can be found in the result section of the get_compute_task tool.
 - name: terminate_compute_task
-  description: ''
+  description: Terminates the given compute task
 - name: get_path_info
-  description: ''
+  description: Returns information about the given path
 - name: path_get_info
-  description: ''
+  description: Returns detailed information on the given path
 - name: path_get_thumbnail
-  description: ''
+  description: Returns the preview thumbnail of a given path
 - name: create_raster_path
-  description: ''
+  description: Creates a new raster path
 - name: create_raster_timestamp
-  description: ''
+  description: Creates a new raster timestamp
 - name: location_vector
-  description: ''
+  description: Get features at a location of a vector timestamp
 - name: path_raster_get_uploads
-  description: ''
+  description: Gets the uploads of a raster timestamp
 - name: get_compute_tasks
-  description: ''
+  description: Retrieves the compute tasks of a given user
 - name: path_list_folder
-  description: ''
+  description: Returns all layers in the given folder that you have access to.
 - name: analyse_raster
-  description: ''
+  description: Analyses the data of raster timestamps
 - name: path_search
-  description: ''
+  description: Search paths on Ellipsis Drive according to the given criteria
 - name: features_by_extent
-  description: ''
+  description: Get features of a vector timestamp by extent
 - name: user_list_root
-  description: ''
+  description: Lists paths in the given root directory of the authenticated user
 tools_source: live tools/list via initialize handshake, 2026-09-12 (signals/audit_mcp_authorship.py --probe)
 authorship: provider
+descriptions_source: live tools/list (authorship probe or saved capture); filled by backfill-tools-from-authorship.py
+  --descriptions, 2026-09-28
