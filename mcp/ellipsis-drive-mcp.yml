@@ -13,48 +13,144 @@ deployment:
   probe: live
   checked: '2026-09-11'
   source: docs-check 2026-09-12 (endpoint found in the provider's own documentation, then probed)
-tools_count: 18
+tools_count: 65
 tools:
+- name: execute_compute_task
+  description: "Executes a python function on the created compute environment. \n    Depending on the\
+    \ complexity of the code and the input/output data sizes this can either resolve in minutes to hours.\n\
+    \    This tool will move the compute task to processing, but the task can still end up with an error\
+    \ as resullt if the code crashes or if the output is invalid."
+- name: get_compute_task
+  description: Returns detailed information on the given compute task
 - name: create_compute_task
   description: Creates a compute task environment with the given specification. It usually takes up to
     a few minutes for the requested environment to be prepared.
-- name: execute_compute_task
-  description: Executes a python function on the created compute environment.      Depending on the complexity
-    of the code and the input/output data sizes this can either resolve in minutes to hours.     This
-    tool will move the compute task to processing,
-- name: get_compute_task
-  description: Returns detailed information on the given compute task
+- name: download_file
+  description: Download the file of a path of type file
+- name: download_mesh_file
+  description: Download a subfile file of a mesh
+- name: get_bookmark
+  description: Returns detailed information on the given bookmark path
+- name: path_get_url
+  description: Returns the url to view the given path in the webviewer
+- name: point_cloud_tileservice
+  description: Retrieves a tile of point cloud data
 - name: download_partial_result_compute_task
   description: Downloads a file with part of the compute task result when largeResult is true. The file
     ids can be found in the result section of the get_compute_task tool.
 - name: terminate_compute_task
   description: Terminates the given compute task
-- name: get_path_info
-  description: Returns information about the given path
-- name: path_get_info
-  description: Returns detailed information on the given path
-- name: path_get_thumbnail
-  description: Returns the preview thumbnail of a given path
-- name: create_raster_path
-  description: Creates a new raster path
 - name: create_raster_timestamp
   description: Creates a new raster timestamp
-- name: location_vector
-  description: Get features at a location of a vector timestamp
-- name: path_raster_get_uploads
-  description: Gets the uploads of a raster timestamp
+- name: path_raster_download_export
+  description: Downloads a raster export task result
+- name: path_raster_download_upload
+  description: Download the upload of a raster timestamp
+- name: path_raster_get_exports
+  description: Retrieves your raster exports
+- name: get_user_usage
+  description: Returns usage of a user on a path
+- name: path_get_thumbnail
+  description: Returns the preview thumbnail of a given path
+- name: create_vector_path
+  description: Creates a new vector path
+- name: create_vector_timestamp
+  description: Creates a new vector timestamp
+- name: path_vector_download_export
+  description: Downloads a vector export task result
+- name: path_vector_download_upload
+  description: Download the upload of a vector timestamp
+- name: path_vector_get_exports
+  description: Retrieves your vector exports
+- name: create_raster_path
+  description: Creates a new raster path
 - name: get_compute_tasks
   description: Retrieves the compute tasks of a given user
-- name: path_list_folder
-  description: Returns all layers in the given folder that you have access to.
-- name: analyse_raster
-  description: Analyses the data of raster timestamps
+- name: ogc_api_features_collection
+  description: Return the OGC API features 1.0 collection of a path
+- name: ogc_api_features_collections
+  description: Return the OGC API features 1.0 collections of a path
+- name: ogc_api_features_conformance
+  description: Return the OGC API features 1.0 conformance page of a path
+- name: ogc_api_features_items
+  description: Return the OGC API features 1.0 items of a path
+- name: ogc_api_features_item
+  description: Return the OGC API features 1.0 item of a path
+- name: ogc_api_features_service_description
+  description: Return the OGC API features 1.0 service description page of a path
+- name: ogc_api_features_landing
+  description: Return the OGC API features 1.0 landing page of a path
+- name: mvt_get_protobuf
+  description: Return the MVT protobuf of a path
+- name: mvt_source
+  description: Return the MVT source of a path
+- name: mvt_style_sheet
+  description: Return the MVT style sheet of a path
+- name: wcs_get_capabilities
+  description: Return the OGC WCS version 1.1.1 capabilities of a path
+- name: wcs_describe_coverage
+  description: Describes the OGC WCS version 1.1.1 coverage of a path
+- name: wcs_get_coverage
+  description: Return the OGC WCS version 1.1.1 coverage of a path
+- name: wfs_get_capabilities
+  description: Return the OGC WFS version 2.0.0 capabilities of a path
+- name: wfs_describe_feature
+  description: Return the OGC WFS version 2.0.0 describe feature of a path
+- name: wfs_get_feature
+  description: Return the OGC WFS version 2.0.0 features of a path
+- name: wms_get_capabilities
+  description: Return the OGC WMS version 1.3.0 capabilities of a path
+- name: wms_get_feature_info
+  description: Return the OGC WMS version 1.3.0 feature info of a path
+- name: wms_get_legend
+  description: Return the OGC WMS version 1.3.0 legend of a path
+- name: wms_get_map
+  description: Return a OGC WMS version 1.3.0 map of a path
+- name: wmts_get_legend
+  description: Return the OGC WMTS version 1.0.0 legend of a path
+- name: wmts_get_feature_info
+  description: Return the OGC WMTS version 1.0.0 feature info of a path
+- name: wmts_get_tile
+  description: Return a OGC WMTS version 1.0.0 tile of a path
+- name: wmts_get_capabilities
+  description: Return the OGC WMTS version 1.0.0 capabilities of a path
+- name: path_get_info
+  description: Returns detailed information on the given path
+- name: path_ranked_search
+  description: Search paths on Ellipsis Drive and gives the best ranking results based on text matching
+    and popularity. Gives better results than the path_search tool but does not support paging.
 - name: path_search
   description: Search paths on Ellipsis Drive according to the given criteria
-- name: features_by_extent
-  description: Get features of a vector timestamp by extent
+- name: path_list_folder
+  description: Returns all layers in the given folder that you have access to.
+- name: path_raster_create_export
+  description: Starts a task to export a section of a raster
+- name: path_raster_get_uploads
+  description: Gets the uploads of a raster timestamp
+- name: raster_tileservice
+  description: Retrieves a tile of raster data
+- name: get_invites
+  description: Returns the paths you have been invites to join and their associated access settings
+- name: get_path_members
+  description: Returns the members or outstanding invites of a map
+- name: get_aggregated_usage
+  description: Returns aggregated daily usage of a path
+- name: get_map_users
+  description: Returns the users that access the path in order of the last interaction
+- name: list_features
+  description: Get features of a vector timestamp
+- name: analyse_raster
+  description: Analyses the data of raster timestamps
+- name: path_vector_get_uploads
+  description: Gets the uploads of a vector timestamp
 - name: user_list_root
   description: Lists paths in the given root directory of the authenticated user
+- name: path_vector_create_export
+  description: Starts a task to export a section of a vector
+- name: features_by_extent
+  description: Get features of a vector timestamp by extent
+- name: location_vector
+  description: Get features at a location of a vector timestamp
 tools_source: live tools/list via initialize handshake, 2026-09-12 (signals/audit_mcp_authorship.py --probe)
 authorship: provider
 descriptions_source: live tools/list (authorship probe or saved capture); filled by backfill-tools-from-authorship.py
