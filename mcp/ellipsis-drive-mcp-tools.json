@@ -1,0 +1,2755 @@
+{
+  "endpoint": "https://mcp.ellipsis-drive.com/",
+  "captured": "2026-10-20",
+  "method": "initialize + tools/list (anonymous, no tool called; roadmap#992)",
+  "protocol_version": "2025-06-18",
+  "server_info": {
+    "name": "Ellipsis Drive MCP",
+    "version": "0.0.1"
+  },
+  "result": {
+    "tools": [
+      {
+        "name": "execute_compute_task",
+        "title": "Executes a compute task",
+        "description": "Executes a python function on the created compute environment. \n    Depending on the complexity of the code and the input/output data sizes this can either resolve in minutes to hours.\n    This tool will move the compute task to processing, but the task can still end up with an error as resullt if the code crashes or if the output is invalid.",
+        "inputSchema": {
+          "$schema": "http://json-schema.org/draft-07/schema#",
+          "type": "object",
+          "properties": {
+            "taskId": {
+              "type": "string",
+              "format": "uuid",
+              "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
+              "description": "The id of the task on which to execute the python function"
+            },
+            "file": {
+              "type": "string",
+              "description": "String with the python function to execute. This python function named \"userFunction\" should have 1 input parameter \n      which will be dict. The raster layers from the create task step can be accessed in the input parameter with their timestampId as \n      key and will be a dict with properties raster (numpy array with raster image values of dimensions number of bands * 256 pixels \n      * 256 pixels, the last band is always an alpha band), transform (a rasterio transform object) and extent (a dict with \n      properties xMin, xMax, yMin, yMax). The vector layers from create task can be accessed in the input parameter with their \n      timestampId as key and will be a dict with property vector being a geopandas geodataframe. The files from create task can be\n      found under their path id as key and will be available as an io BytesIO. \n      Output must be possible to json.dump for largeResponse = False and must be an io BytesIO otherwise, illegal outputs will error the task."
+            },
+            "writeToLayer": {
+              "description": "Specifies the destination layer to write the file result to.",
+              "type": "object",
+              "properties": {
+                "pathId": {
+                  "type": "string",
+                  "format": "uuid",
+                  "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                },
+                "timestampId": {
+                  "type": "string",
+                  "format": "uuid",
+                  "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                },
+                "file": {
+                  "type": "object",
+                  "properties": {
+                    "format": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "format"
+                  ]
+                }
+              },
+              "required": [
+                "pathId",
+                "timestampId",
+                "file"
+              ]
+            }
+          },
+          "required": [
+            "taskId",
+            "file"
+          ]
+        },
+        "execution": {
+          "taskSupport": "forbidden"
+        }
+      },
+      {
+        "name": "get_compute_task",
+        "title": "Get compute task",
+        "description": "Returns detailed information on the given compute task",
+        "inputSchema": {
+          "$schema": "http://json-schema.org/draft-07/schema#",
+          "type": "object",
+          "properties": {
+            "taskId": {
+              "type": "string",
+              "format": "uuid",
+              "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
+              "description": "The id of the task to get the information for"
+            }
+          },
+          "required": [
+            "taskId"
+          ]
+        },
+        "execution": {
+          "taskSupport": "forbidden"
+        }
+      },
+      {
+        "name": "create_compute_task",
+        "title": "Create compute task",
+        "description": "Creates a compute task environment with the given specification. It usually takes up to a few minutes for the requested environment to be prepared.",
+        "inputSchema": {
+          "$schema": "http://json-schema.org/draft-07/schema#",
+          "type": "object",
+          "properties": {
+            "interpreter": {
+              "type": "string",
+              "description": "The interpreter of the task, for example python3.12. Currently only python is supported."
+            },
+            "requirements": {
+              "type": "string",
+              "description": "The python packages required for the task, should be formatted like a requirements.txt so it can be pip installed."
+            },
+            "nodes": {
+              "type": "integer",
+              "minimum": -2147483648,
+              "maximum": 2147483647,
+              "description": "The number of nodes to prepare to run the task, the compute load is spread out over these nodes."
+            },
+            "layers": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "pathId": {
+                    "type": "string",
+                    "format": "uuid",
+                    "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                  },
+                  "timestampId": {
+                    "type": "string",
+                    "format": "uuid",
+                    "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                  }
+                },
+                "required": [
+                  "pathId",
+                  "timestampId"
+                ]
+              },
+              "description": "Array of json objects with properties pathId and timestampId describing the map data layers that will be available during the task."
+            },
+            "files": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "format": "uuid",
+                "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+              },
+              "description": "Array with the path ids of the paths of type file to use during the compute."
+            },
+            "largeResult": {
+              "type": "boolean",
+              "description": "Boolean whether the result of the task is going to be a file or a json."
+            }
+          },
+          "required": [
+            "interpreter",
+            "requirements",
+            "nodes",
+            "layers",
+            "files",
+            "largeResult"
+          ]
+        },
+        "execution": {
+          "taskSupport": "forbidden"
+        }
+      },
+      {
+        "name": "download_file",
+        "title": "Download file path",
+        "description": "Download the file of a path of type file",
+        "inputSchema": {
+          "$schema": "http://json-schema.org/draft-07/schema#",
+          "type": "object",
+          "properties": {
+            "pathId": {
+              "type": "string",
+              "format": "uuid",
+              "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
+              "description": "The path id of the file to download"
+            }
+          },
+          "required": [
+            "pathId"
+          ]
+        },
+        "execution": {
+          "taskSupport": "forbidden"
+        }
+      },
+      {
+        "name": "download_mesh_file",
+        "title": "Download mesh file",
+        "description": "Download a subfile file of a mesh",
+        "inputSchema": {
+          "$schema": "http://json-schema.org/draft-07/schema#",
+          "type": "object",
+          "properties": {
+            "pathId": {
+              "type": "string",
+              "format": "uuid",
+              "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
+              "description": "The path id of the mesh"
+            },
+            "timestampId": {
+              "type": "string",
+              "format": "uuid",
+              "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
+              "description": "The timestamp id of the mesh"
+            },
+            "filePath": {
+              "type": "string",
+              "description": "The file path of the subfile to download, for example tileset.json"
+            }
+          },
+          "required": [
+            "pathId",
+            "timestampId",
+            "filePath"
+          ]
+        },
+        "execution": {
+          "taskSupport": "forbidden"
+        }
+      },
+      {
+        "name": "get_bookmark",
+        "title": "Get bookmark info",
+        "description": "Returns detailed information on the given bookmark path",
+        "inputSchema": {
+          "$schema": "http://json-schema.org/draft-07/schema#",
+          "type": "object",
+          "properties": {
+            "pathId": {
+              "type": "string",
+              "format": "uuid",
+              "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
+              "description": "The path id of the bookmark to get the information for"
+            }
+          },
+          "required": [
+            "pathId"
+          ]
+        },
+        "execution": {
+          "taskSupport": "forbidden"
+        }
+      },
+      {
+        "name": "path_get_url",
+        "title": "Get path url",
+        "description": "Returns the url to view the given path in the webviewer",
+        "inputSchema": {
+          "$schema": "http://json-schema.org/draft-07/schema#",
+          "type": "object",
+          "properties": {
+            "pathId": {
+              "type": "string",
+              "format": "uuid",
+              "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
+              "description": "The id of the path to get the url for"
+            }
+          },
+          "required": [
+            "pathId"
+          ]
+        },
+        "execution": {
+          "taskSupport": "forbidden"
+        }
+      },
+      {
+        "name": "point_cloud_tileservice",
+        "title": "Point cloud tileservice",
+        "description": "Retrieves a tile of point cloud data",
+        "inputSchema": {
+          "$schema": "http://json-schema.org/draft-07/schema#",
+          "type": "object",
+          "properties": {
+            "pathId": {
+              "type": "string",
+              "format": "uuid",
+              "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
+              "description": "The path id of the point cloud"
+            },
+            "timestampId": {
+              "type": "string",
+              "format": "uuid",
+              "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
+              "description": "The timestamp id of the point cloud"
+            },
+            "z": {
+              "type": "integer",
+              "minimum": -2147483648,
+              "maximum": 2147483647,
+              "description": "The zoom level of the tile to retrieve"
+            },
+            "x": {
+              "type": "integer",
+              "minimum": -2147483648,
+              "maximum": 2147483647,
+              "description": "The x coordinate of the tile to retrieve"
+            },
+            "y": {
+              "type": "integer",
+              "minimum": -2147483648,
+              "maximum": 2147483647,
+              "description": "The y coordinate of the tile to retrieve"
+            }
+          },
+          "required": [
+            "pathId",
+            "timestampId",
+            "z",
+            "x",
+            "y"
+          ]
+        },
+        "execution": {
+          "taskSupport": "forbidden"
+        }
+      },
+      {
+        "name": "download_partial_result_compute_task",
+        "title": "Downloads the compute task result",
+        "description": "Downloads a file with part of the compute task result when largeResult is true. The file ids can be found in the result section of the get_compute_task tool.",
+        "inputSchema": {
+          "$schema": "http://json-schema.org/draft-07/schema#",
+          "type": "object",
+          "properties": {
+            "taskId": {
+              "type": "string",
+              "format": "uuid",
+              "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
+              "description": "The id of the task to get output from"
+            },
+            "fileId": {
+              "type": "string",
+              "format": "uuid",
+              "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
+              "description": "The id of the subresult file to download"
+            }
+          },
+          "required": [
+            "taskId",
+            "fileId"
+          ]
+        },
+        "execution": {
+          "taskSupport": "forbidden"
+        }
+      },
+      {
+        "name": "terminate_compute_task",
+        "title": "Terminate compute task",
+        "description": "Terminates the given compute task",
+        "inputSchema": {
+          "$schema": "http://json-schema.org/draft-07/schema#",
+          "type": "object",
+          "properties": {
+            "taskId": {
+              "type": "string",
+              "format": "uuid",
+              "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
+              "description": "The id of the task to terminate"
+            }
+          },
+          "required": [
+            "taskId"
+          ]
+        },
+        "execution": {
+          "taskSupport": "forbidden"
+        }
+      },
+      {
+        "name": "create_raster_timestamp",
+        "title": "Create raster timestamp",
+        "description": "Creates a new raster timestamp",
+        "inputSchema": {
+          "$schema": "http://json-schema.org/draft-07/schema#",
+          "type": "object",
+          "properties": {
+            "pathId": {
+              "type": "string",
+              "format": "uuid",
+              "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
+              "description": "The id of the raster path to create a timestamp for"
+            },
+            "date": {
+              "type": "object",
+              "properties": {
+                "from": {
+                  "type": "string"
+                },
+                "to": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "from",
+                "to"
+              ],
+              "description": "Object with the properties from and to describing the timerange of the timestamp"
+            },
+            "description": {
+              "description": "Description of the timestamp",
+              "type": "string"
+            }
+          },
+          "required": [
+            "pathId",
+            "date"
+          ]
+        },
+        "execution": {
+          "taskSupport": "forbidden"
+        }
+      },
+      {
+        "name": "path_raster_download_export",
+        "title": "Downloads a raster export",
+        "description": "Downloads a raster export task result",
+        "inputSchema": {
+          "$schema": "http://json-schema.org/draft-07/schema#",
+          "type": "object",
+          "properties": {
+            "exportId": {
+              "type": "string",
+              "format": "uuid",
+              "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
+              "description": "The id of the export to download"
+            }
+          },
+          "required": [
+            "exportId"
+          ]
+        },
+        "execution": {
+          "taskSupport": "forbidden"
+        }
+      },
+      {
+        "name": "path_raster_download_upload",
+        "title": "Download raster upload",
+        "description": "Download the upload of a raster timestamp",
+        "inputSchema": {
+          "$schema": "http://json-schema.org/draft-07/schema#",
+          "type": "object",
+          "properties": {
+            "pathId": {
+              "type": "string",
+              "format": "uuid",
+              "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
+              "description": "The id of the path"
+            },
+            "timestampId": {
+              "type": "string",
+              "format": "uuid",
+              "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
+              "description": "The id of the timestamp of the given path to download the upload of"
+            },
+            "fileId": {
+              "type": "string",
+              "format": "uuid",
+              "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
+              "description": "The id of the upload to download"
+            }
+          },
+          "required": [
+            "pathId",
+            "timestampId",
+            "fileId"
+          ]
+        },
+        "execution": {
+          "taskSupport": "forbidden"
+        }
+      },
+      {
+        "name": "path_raster_get_exports",
+        "title": "Retrieves raster exports",
+        "description": "Retrieves your raster exports",
+        "inputSchema": {
+          "$schema": "http://json-schema.org/draft-07/schema#",
+          "type": "object",
+          "properties": {}
+        },
+        "execution": {
+          "taskSupport": "forbidden"
+        }
+      },
+      {
+        "name": "get_user_usage",
+        "title": "Get user usage",
+        "description": "Returns usage of a user on a path",
+        "inputSchema": {
+          "$schema": "http://json-schema.org/draft-07/schema#",
+          "type": "object",
+          "properties": {
+            "pathId": {
+              "type": "string",
+              "format": "uuid",
+              "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
+              "description": "The path id of the path to get the usage for"
+            },
+            "userId": {
+              "type": "string",
+              "format": "uuid",
+              "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
+              "description": "The id of the user to get the usage for"
+            }
+          },
+          "required": [
+            "pathId",
+            "userId"
+          ]
+        },
+        "execution": {
+          "taskSupport": "forbidden"
+        }
+      },
+      {
+        "name": "path_get_thumbnail",
+        "title": "Get path thumbnail",
+        "description": "Returns the preview thumbnail of a given path",
+        "inputSchema": {
+          "$schema": "http://json-schema.org/draft-07/schema#",
+          "type": "object",
+          "properties": {
+            "pathId": {
+              "type": "string",
+              "format": "uuid",
+              "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
+              "description": "The id of the path to get the thumbnail for"
+            }
+          },
+          "required": [
+            "pathId"
+          ]
+        },
+        "execution": {
+          "taskSupport": "forbidden"
+        }
+      },
+      {
+        "name": "create_vector_path",
+        "title": "Create vector path",
+        "description": "Creates a new vector path",
+        "inputSchema": {
+          "$schema": "http://json-schema.org/draft-07/schema#",
+          "type": "object",
+          "properties": {
+            "name": {
+              "type": "string",
+              "description": "The name of the path to create"
+            },
+            "parentId": {
+              "description": "The id of the parent folder, leave empty to put the new path in myDrive root",
+              "type": "string",
+              "format": "uuid",
+              "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+            }
+          },
+          "required": [
+            "name"
+          ]
+        },
+        "execution": {
+          "taskSupport": "forbidden"
+        }
+      },
+      {
+        "name": "create_vector_timestamp",
+        "title": "Create vector timestamp",
+        "description": "Creates a new vector timestamp",
+        "inputSchema": {
+          "$schema": "http://json-schema.org/draft-07/schema#",
+          "type": "object",
+          "properties": {
+            "pathId": {
+              "type": "string",
+              "format": "uuid",
+              "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
+              "description": "The id of the vector path to create a timestamp for"
+            },
+            "date": {
+              "type": "object",
+              "properties": {
+                "from": {
+                  "type": "string"
+                },
+                "to": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "from",
+                "to"
+              ],
+              "description": "Object with the properties from and to describing the timerange of the timestamp"
+            },
+            "description": {
+              "description": "Description of the timestamp",
+              "type": "string"
+            }
+          },
+          "required": [
+            "pathId",
+            "date"
+          ]
+        },
+        "execution": {
+          "taskSupport": "forbidden"
+        }
+      },
+      {
+        "name": "path_vector_download_export",
+        "title": "Downloads a vector export",
+        "description": "Downloads a vector export task result",
+        "inputSchema": {
+          "$schema": "http://json-schema.org/draft-07/schema#",
+          "type": "object",
+          "properties": {
+            "exportId": {
+              "type": "string",
+              "format": "uuid",
+              "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
+              "description": "The id of the export to download"
+            }
+          },
+          "required": [
+            "exportId"
+          ]
+        },
+        "execution": {
+          "taskSupport": "forbidden"
+        }
+      },
+      {
+        "name": "path_vector_download_upload",
+        "title": "Download vector upload",
+        "description": "Download the upload of a vector timestamp",
+        "inputSchema": {
+          "$schema": "http://json-schema.org/draft-07/schema#",
+          "type": "object",
+          "properties": {
+            "pathId": {
+              "type": "string",
+              "format": "uuid",
+              "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
+              "description": "The id of the path"
+            },
+            "timestampId": {
+              "type": "string",
+              "format": "uuid",
+              "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
+              "description": "The id of the timestamp of the given path to download the upload of"
+            },
+            "fileId": {
+              "type": "string",
+              "format": "uuid",
+              "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
+              "description": "The id of the upload to download"
+            }
+          },
+          "required": [
+            "pathId",
+            "timestampId",
+            "fileId"
+          ]
+        },
+        "execution": {
+          "taskSupport": "forbidden"
+        }
+      },
+      {
+        "name": "path_vector_get_exports",
+        "title": "Retrieves vector exports",
+        "description": "Retrieves your vector exports",
+        "inputSchema": {
+          "$schema": "http://json-schema.org/draft-07/schema#",
+          "type": "object",
+          "properties": {}
+        },
+        "execution": {
+          "taskSupport": "forbidden"
+        }
+      },
+      {
+        "name": "create_raster_path",
+        "title": "Create raster path",
+        "description": "Creates a new raster path",
+        "inputSchema": {
+          "$schema": "http://json-schema.org/draft-07/schema#",
+          "type": "object",
+          "properties": {
+            "name": {
+              "type": "string",
+              "description": "The name of the path to create"
+            },
+            "parentId": {
+              "description": "The id of the parent folder, leave empty to put the new path in myDrive root",
+              "type": "string",
+              "format": "uuid",
+              "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+            }
+          },
+          "required": [
+            "name"
+          ]
+        },
+        "execution": {
+          "taskSupport": "forbidden"
+        }
+      },
+      {
+        "name": "get_compute_tasks",
+        "title": "Get compute tasks",
+        "description": "Retrieves the compute tasks of a given user",
+        "inputSchema": {
+          "$schema": "http://json-schema.org/draft-07/schema#",
+          "type": "object",
+          "properties": {
+            "pageStart": {
+              "description": "The start for paging.",
+              "type": "object",
+              "properties": {
+                "dateFrom": {
+                  "type": "string",
+                  "description": "The time to start paging from."
+                },
+                "pagingId": {
+                  "description": "The pagingId to start paging from in case dateFrom is not unique enough.",
+                  "type": "string",
+                  "format": "uuid",
+                  "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                }
+              },
+              "required": [
+                "dateFrom"
+              ]
+            },
+            "pageSize": {
+              "description": "The number of items returned",
+              "type": "integer",
+              "minimum": -2147483648,
+              "maximum": 2147483647
+            }
+          }
+        },
+        "execution": {
+          "taskSupport": "forbidden"
+        }
+      },
+      {
+        "name": "ogc_api_features_collection",
+        "title": "OGC API features collection",
+        "description": "Return the OGC API features 1.0 collection of a path",
+        "inputSchema": {
+          "$schema": "http://json-schema.org/draft-07/schema#",
+          "type": "object",
+          "properties": {
+            "pathId": {
+              "type": "string",
+              "format": "uuid",
+              "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
+              "description": "The id of the path to get the ogc api features collection for"
+            },
+            "timestampId": {
+              "type": "string",
+              "format": "uuid",
+              "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
+              "description": "The id of the timestamp to get the ogc api features collection for"
+            }
+          },
+          "required": [
+            "pathId",
+            "timestampId"
+          ]
+        },
+        "execution": {
+          "taskSupport": "forbidden"
+        }
+      },
+      {
+        "name": "ogc_api_features_collections",
+        "title": "OGC API features collections",
+        "description": "Return the OGC API features 1.0 collections of a path",
+        "inputSchema": {
+          "$schema": "http://json-schema.org/draft-07/schema#",
+          "type": "object",
+          "properties": {
+            "pathId": {
+              "type": "string",
+              "format": "uuid",
+              "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
+              "description": "The id of the path to get the ogc api features collections for"
+            }
+          },
+          "required": [
+            "pathId"
+          ]
+        },
+        "execution": {
+          "taskSupport": "forbidden"
+        }
+      },
+      {
+        "name": "ogc_api_features_conformance",
+        "title": "OGC API features conformance page",
+        "description": "Return the OGC API features 1.0 conformance page of a path",
+        "inputSchema": {
+          "$schema": "http://json-schema.org/draft-07/schema#",
+          "type": "object",
+          "properties": {
+            "pathId": {
+              "type": "string",
+              "format": "uuid",
+              "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
+              "description": "The id of the path to get the ogc api features conformance page for"
+            }
+          },
+          "required": [
+            "pathId"
+          ]
+        },
+        "execution": {
+          "taskSupport": "forbidden"
+        }
+      },
+      {
+        "name": "ogc_api_features_items",
+        "title": "OGC API features items",
+        "description": "Return the OGC API features 1.0 items of a path",
+        "inputSchema": {
+          "$schema": "http://json-schema.org/draft-07/schema#",
+          "type": "object",
+          "properties": {
+            "pathId": {
+              "type": "string",
+              "format": "uuid",
+              "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
+              "description": "The id of the path to get the ogc api features items for"
+            },
+            "timestampId": {
+              "type": "string",
+              "format": "uuid",
+              "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
+              "description": "The id of the timestamp to get the ogc api features items for"
+            },
+            "bbox": {
+              "type": "string",
+              "description": "The bbox to get the ogc api features items for"
+            }
+          },
+          "required": [
+            "pathId",
+            "timestampId",
+            "bbox"
+          ]
+        },
+        "execution": {
+          "taskSupport": "forbidden"
+        }
+      },
+      {
+        "name": "ogc_api_features_item",
+        "title": "OGC API features item",
+        "description": "Return the OGC API features 1.0 item of a path",
+        "inputSchema": {
+          "$schema": "http://json-schema.org/draft-07/schema#",
+          "type": "object",
+          "properties": {
+            "pathId": {
+              "type": "string",
+              "format": "uuid",
+              "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
+              "description": "The id of the path to get the ogc api features item for"
+            },
+            "timestampId": {
+              "type": "string",
+              "format": "uuid",
+              "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
+              "description": "The id of the timestamp to get the ogc api features item for"
+            },
+            "featureId": {
+              "type": "string",
+              "format": "uuid",
+              "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
+              "description": "The id of the feature to get the ogc api features item for"
+            }
+          },
+          "required": [
+            "pathId",
+            "timestampId",
+            "featureId"
+          ]
+        },
+        "execution": {
+          "taskSupport": "forbidden"
+        }
+      },
+      {
+        "name": "ogc_api_features_service_description",
+        "title": "OGC API features service description page",
+        "description": "Return the OGC API features 1.0 service description page of a path",
+        "inputSchema": {
+          "$schema": "http://json-schema.org/draft-07/schema#",
+          "type": "object",
+          "properties": {
+            "pathId": {
+              "type": "string",
+              "format": "uuid",
+              "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
+              "description": "The id of the path to get the ogc api features service description page for"
+            }
+          },
+          "required": [
+            "pathId"
+          ]
+        },
+        "execution": {
+          "taskSupport": "forbidden"
+        }
+      },
+      {
+        "name": "ogc_api_features_landing",
+        "title": "OGC API features landing page",
+        "description": "Return the OGC API features 1.0 landing page of a path",
+        "inputSchema": {
+          "$schema": "http://json-schema.org/draft-07/schema#",
+          "type": "object",
+          "properties": {
+            "pathId": {
+              "type": "string",
+              "format": "uuid",
+              "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
+              "description": "The id of the path to get the ogc api features landing page for"
+            }
+          },
+          "required": [
+            "pathId"
+          ]
+        },
+        "execution": {
+          "taskSupport": "forbidden"
+        }
+      },
+      {
+        "name": "mvt_get_protobuf",
+        "title": "mvt get protobuf",
+        "description": "Return the MVT protobuf of a path",
+        "inputSchema": {
+          "$schema": "http://json-schema.org/draft-07/schema#",
+          "type": "object",
+          "properties": {
+            "pathId": {
+              "type": "string",
+              "format": "uuid",
+              "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
+              "description": "The id of the path to get the protobuf for"
+            },
+            "timestampId": {
+              "type": "string",
+              "format": "uuid",
+              "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
+              "description": "The id of the timestamp to get the protobuf for"
+            },
+            "x": {
+              "type": "integer",
+              "minimum": -2147483648,
+              "maximum": 2147483647,
+              "description": "The x coordinate of the tile to get the protobuf for"
+            },
+            "y": {
+              "type": "integer",
+              "minimum": -2147483648,
+              "maximum": 2147483647,
+              "description": "The y coordinate of the tile to get the protobuf for"
+            },
+            "z": {
+              "type": "integer",
+              "minimum": -2147483648,
+              "maximum": 2147483647,
+              "description": "The z coordinate of the tile to get the protobuf for"
+            }
+          },
+          "required": [
+            "pathId",
+            "timestampId",
+            "x",
+            "y",
+            "z"
+          ]
+        },
+        "execution": {
+          "taskSupport": "forbidden"
+        }
+      },
+      {
+        "name": "mvt_source",
+        "title": "mvt source",
+        "description": "Return the MVT source of a path",
+        "inputSchema": {
+          "$schema": "http://json-schema.org/draft-07/schema#",
+          "type": "object",
+          "properties": {
+            "pathId": {
+              "type": "string",
+              "format": "uuid",
+              "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
+              "description": "The id of the path to get the source for"
+            },
+            "timestampId": {
+              "type": "string",
+              "format": "uuid",
+              "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
+              "description": "The id of the timestamp to get the source for"
+            },
+            "zoom": {
+              "description": "The zoom to get the source for",
+              "type": "integer",
+              "minimum": -2147483648,
+              "maximum": 2147483647
+            }
+          },
+          "required": [
+            "pathId",
+            "timestampId"
+          ]
+        },
+        "execution": {
+          "taskSupport": "forbidden"
+        }
+      },
+      {
+        "name": "mvt_style_sheet",
+        "title": "mvt style sheet",
+        "description": "Return the MVT style sheet of a path",
+        "inputSchema": {
+          "$schema": "http://json-schema.org/draft-07/schema#",
+          "type": "object",
+          "properties": {
+            "pathId": {
+              "type": "string",
+              "format": "uuid",
+              "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
+              "description": "The id of the path to get the stylesheet for"
+            },
+            "timestampId": {
+              "type": "string",
+              "format": "uuid",
+              "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
+              "description": "The id of the timestamp to get the stylesheet for"
+            },
+            "style": {
+              "type": "string",
+              "description": "The id of the style or full style json to get the stylesheet for"
+            },
+            "zoom": {
+              "description": "The zoom to get the stylesheet for",
+              "type": "integer",
+              "minimum": -2147483648,
+              "maximum": 2147483647
+            }
+          },
+          "required": [
+            "pathId",
+            "timestampId",
+            "style"
+          ]
+        },
+        "execution": {
+          "taskSupport": "forbidden"
+        }
+      },
+      {
+        "name": "wcs_get_capabilities",
+        "title": "wcs get capabilities",
+        "description": "Return the OGC WCS version 1.1.1 capabilities of a path",
+        "inputSchema": {
+          "$schema": "http://json-schema.org/draft-07/schema#",
+          "type": "object",
+          "properties": {
+            "pathId": {
+              "type": "string",
+              "format": "uuid",
+              "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
+              "description": "The id of the path to get the wcs capabilities for"
+            }
+          },
+          "required": [
+            "pathId"
+          ]
+        },
+        "execution": {
+          "taskSupport": "forbidden"
+        }
+      },
+      {
+        "name": "wcs_describe_coverage",
+        "title": "wcs describe coverage",
+        "description": "Describes the OGC WCS version 1.1.1 coverage of a path",
+        "inputSchema": {
+          "$schema": "http://json-schema.org/draft-07/schema#",
+          "type": "object",
+          "properties": {
+            "pathId": {
+              "type": "string",
+              "format": "uuid",
+              "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
+              "description": "The id of the path to describe the wcs coverage for"
+            },
+            "identifiers": {
+              "type": "string",
+              "description": "The identifiers to get the wcs coverage for"
+            }
+          },
+          "required": [
+            "pathId",
+            "identifiers"
+          ]
+        },
+        "execution": {
+          "taskSupport": "forbidden"
+        }
+      },
+      {
+        "name": "wcs_get_coverage",
+        "title": "wcs get coverage",
+        "description": "Return the OGC WCS version 1.1.1 coverage of a path",
+        "inputSchema": {
+          "$schema": "http://json-schema.org/draft-07/schema#",
+          "type": "object",
+          "properties": {
+            "pathId": {
+              "type": "string",
+              "format": "uuid",
+              "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
+              "description": "The id of the path to get the wcs coverage for"
+            },
+            "identifier": {
+              "type": "string",
+              "description": "The identifier to get the wcs coverage for"
+            },
+            "boundingbox": {
+              "type": "string",
+              "description": "The bbox to get the wcs coverage for"
+            },
+            "gridOrigin": {
+              "type": "string",
+              "description": "The grid origin to get the wcs coverage for"
+            },
+            "gridOffsets": {
+              "type": "string",
+              "description": "The grid offsets to get the wcs coverage for"
+            },
+            "gridBaseCrs": {
+              "type": "string",
+              "description": "The grid base crs to get the wcs coverage for"
+            },
+            "gridCs": {
+              "type": "string",
+              "description": "The grid cs to get the wcs coverage for"
+            },
+            "gridType": {
+              "type": "string",
+              "description": "The grid type to get the wcs coverage for"
+            }
+          },
+          "required": [
+            "pathId",
+            "identifier",
+            "boundingbox",
+            "gridOrigin",
+            "gridOffsets",
+            "gridBaseCrs",
+            "gridCs",
+            "gridType"
+          ]
+        },
+        "execution": {
+          "taskSupport": "forbidden"
+        }
+      },
+      {
+        "name": "wfs_get_capabilities",
+        "title": "wfs get capabilities",
+        "description": "Return the OGC WFS version 2.0.0 capabilities of a path",
+        "inputSchema": {
+          "$schema": "http://json-schema.org/draft-07/schema#",
+          "type": "object",
+          "properties": {
+            "pathId": {
+              "type": "string",
+              "format": "uuid",
+              "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
+              "description": "The id of the path to get the wfs capabilities for"
+            }
+          },
+          "required": [
+            "pathId"
+          ]
+        },
+        "execution": {
+          "taskSupport": "forbidden"
+        }
+      },
+      {
+        "name": "wfs_describe_feature",
+        "title": "wfs describe feature",
+        "description": "Return the OGC WFS version 2.0.0 describe feature of a path",
+        "inputSchema": {
+          "$schema": "http://json-schema.org/draft-07/schema#",
+          "type": "object",
+          "properties": {
+            "pathId": {
+              "type": "string",
+              "format": "uuid",
+              "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
+              "description": "The id of the path to get the wfs describe feature for"
+            }
+          },
+          "required": [
+            "pathId"
+          ]
+        },
+        "execution": {
+          "taskSupport": "forbidden"
+        }
+      },
+      {
+        "name": "wfs_get_feature",
+        "title": "wfs get feature",
+        "description": "Return the OGC WFS version 2.0.0 features of a path",
+        "inputSchema": {
+          "$schema": "http://json-schema.org/draft-07/schema#",
+          "type": "object",
+          "properties": {
+            "pathId": {
+              "type": "string",
+              "format": "uuid",
+              "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
+              "description": "The id of the path to get the wfs features for"
+            },
+            "typename": {
+              "type": "string",
+              "description": "The id of the timestamp to get the wfs features for"
+            },
+            "bbox": {
+              "type": "string",
+              "description": "The bbox to get the wfs features for"
+            }
+          },
+          "required": [
+            "pathId",
+            "typename",
+            "bbox"
+          ]
+        },
+        "execution": {
+          "taskSupport": "forbidden"
+        }
+      },
+      {
+        "name": "wms_get_capabilities",
+        "title": "wms get capabilities",
+        "description": "Return the OGC WMS version 1.3.0 capabilities of a path",
+        "inputSchema": {
+          "$schema": "http://json-schema.org/draft-07/schema#",
+          "type": "object",
+          "properties": {
+            "pathId": {
+              "type": "string",
+              "format": "uuid",
+              "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
+              "description": "The id of the path to get the wms capabilities for"
+            }
+          },
+          "required": [
+            "pathId"
+          ]
+        },
+        "execution": {
+          "taskSupport": "forbidden"
+        }
+      },
+      {
+        "name": "wms_get_feature_info",
+        "title": "WMS get feature info",
+        "description": "Return the OGC WMS version 1.3.0 feature info of a path",
+        "inputSchema": {
+          "$schema": "http://json-schema.org/draft-07/schema#",
+          "type": "object",
+          "properties": {
+            "pathId": {
+              "type": "string",
+              "format": "uuid",
+              "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
+              "description": "The id of the path to get the WMS feature info for"
+            },
+            "layers": {
+              "type": "string",
+              "description": "The layers to get the WMS feature info for"
+            },
+            "bbox": {
+              "type": "string",
+              "description": "The bbox of the path to get the WMS feature info for"
+            },
+            "crs": {
+              "type": "string",
+              "description": "The src of the path to get the WMS feature info for"
+            }
+          },
+          "required": [
+            "pathId",
+            "layers",
+            "bbox",
+            "crs"
+          ]
+        },
+        "execution": {
+          "taskSupport": "forbidden"
+        }
+      },
+      {
+        "name": "wms_get_legend",
+        "title": "wms get legend",
+        "description": "Return the OGC WMS version 1.3.0 legend of a path",
+        "inputSchema": {
+          "$schema": "http://json-schema.org/draft-07/schema#",
+          "type": "object",
+          "properties": {
+            "pathId": {
+              "type": "string",
+              "format": "uuid",
+              "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
+              "description": "The id of the path to get the wms legend for"
+            },
+            "layer": {
+              "type": "string",
+              "description": "The layer to get the WMS legend for"
+            }
+          },
+          "required": [
+            "pathId",
+            "layer"
+          ]
+        },
+        "execution": {
+          "taskSupport": "forbidden"
+        }
+      },
+      {
+        "name": "wms_get_map",
+        "title": "WMS get map",
+        "description": "Return a OGC WMS version 1.3.0 map of a path",
+        "inputSchema": {
+          "$schema": "http://json-schema.org/draft-07/schema#",
+          "type": "object",
+          "properties": {
+            "pathId": {
+              "type": "string",
+              "format": "uuid",
+              "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
+              "description": "The id of the path to get the WMS map for"
+            },
+            "layers": {
+              "type": "string",
+              "description": "The layers to get the WMS map for"
+            },
+            "bbox": {
+              "type": "string",
+              "description": "The bbox to get the WMS map for"
+            },
+            "width": {
+              "type": "integer",
+              "minimum": -2147483648,
+              "maximum": 2147483647,
+              "description": "The width of the WMS map image"
+            },
+            "height": {
+              "type": "integer",
+              "minimum": -2147483648,
+              "maximum": 2147483647,
+              "description": "The height of the WMS map image"
+            },
+            "crs": {
+              "description": "The crs of the WMS map",
+              "type": "string"
+            }
+          },
+          "required": [
+            "pathId",
+            "layers",
+            "bbox",
+            "width",
+            "height"
+          ]
+        },
+        "execution": {
+          "taskSupport": "forbidden"
+        }
+      },
+      {
+        "name": "wmts_get_legend",
+        "title": "WMTS get legend",
+        "description": "Return the OGC WMTS version 1.0.0 legend of a path",
+        "inputSchema": {
+          "$schema": "http://json-schema.org/draft-07/schema#",
+          "type": "object",
+          "properties": {
+            "pathId": {
+              "type": "string",
+              "format": "uuid",
+              "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
+              "description": "The id of the path to get the WMTS legend for"
+            },
+            "layer": {
+              "type": "string",
+              "description": "The layer to get the WMTS legend for"
+            }
+          },
+          "required": [
+            "pathId",
+            "layer"
+          ]
+        },
+        "execution": {
+          "taskSupport": "forbidden"
+        }
+      },
+      {
+        "name": "wmts_get_feature_info",
+        "title": "WMTS get feature info",
+        "description": "Return the OGC WMTS version 1.0.0 feature info of a path",
+        "inputSchema": {
+          "$schema": "http://json-schema.org/draft-07/schema#",
+          "type": "object",
+          "properties": {
+            "pathId": {
+              "type": "string",
+              "format": "uuid",
+              "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
+              "description": "The id of the path to get the WMTS feature info for"
+            },
+            "layers": {
+              "type": "string",
+              "description": "The layers to get the WMTS feature info for"
+            },
+            "bbox": {
+              "type": "string",
+              "description": "The bbox of the path to get the WMTS feature info for"
+            },
+            "tilematrixset": {
+              "type": "string",
+              "description": "The tile matrix set of the path to get the WMTS feature info for"
+            }
+          },
+          "required": [
+            "pathId",
+            "layers",
+            "bbox",
+            "tilematrixset"
+          ]
+        },
+        "execution": {
+          "taskSupport": "forbidden"
+        }
+      },
+      {
+        "name": "wmts_get_tile",
+        "title": "WMTS get tile",
+        "description": "Return a OGC WMTS version 1.0.0 tile of a path",
+        "inputSchema": {
+          "$schema": "http://json-schema.org/draft-07/schema#",
+          "type": "object",
+          "properties": {
+            "pathId": {
+              "type": "string",
+              "format": "uuid",
+              "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
+              "description": "The id of the path to get the WMTS tile for"
+            },
+            "layer": {
+              "type": "string",
+              "description": "The layer to get the WMTS tile for"
+            },
+            "tilematrix": {
+              "type": "integer",
+              "minimum": -2147483648,
+              "maximum": 2147483647,
+              "description": "The tile matrix of the path to get the WMTS tile for"
+            },
+            "tilecol": {
+              "type": "integer",
+              "minimum": -2147483648,
+              "maximum": 2147483647,
+              "description": "The tile column of the path to get the WMTS tile for"
+            },
+            "tilerow": {
+              "type": "integer",
+              "minimum": -2147483648,
+              "maximum": 2147483647,
+              "description": "The tile row of the path to get the WMTS tile for"
+            },
+            "tilematrixset": {
+              "description": "The tile matrix set of the path to get the WMTS tile for",
+              "type": "string"
+            }
+          },
+          "required": [
+            "pathId",
+            "layer",
+            "tilematrix",
+            "tilecol",
+            "tilerow"
+          ]
+        },
+        "execution": {
+          "taskSupport": "forbidden"
+        }
+      },
+      {
+        "name": "wmts_get_capabilities",
+        "title": "WMTS get capabilities",
+        "description": "Return the OGC WMTS version 1.0.0 capabilities of a path",
+        "inputSchema": {
+          "$schema": "http://json-schema.org/draft-07/schema#",
+          "type": "object",
+          "properties": {
+            "pathId": {
+              "type": "string",
+              "format": "uuid",
+              "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
+              "description": "The id of the path to get the WMTS capabilities for"
+            }
+          },
+          "required": [
+            "pathId"
+          ]
+        },
+        "execution": {
+          "taskSupport": "forbidden"
+        }
+      },
+      {
+        "name": "path_get_info",
+        "title": "Get path info",
+        "description": "Returns detailed information on the given path",
+        "inputSchema": {
+          "$schema": "http://json-schema.org/draft-07/schema#",
+          "type": "object",
+          "properties": {
+            "pathId": {
+              "type": "string",
+              "format": "uuid",
+              "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
+              "description": "The id of the path to get the information for"
+            },
+            "returnType": {
+              "description": "Defines the information granularity that should be returned.\n      minimal contains the bare minimum, access also has yourAccess and driveLocation, data instead has\n      timestamp, styling, properties and bands and all has everything.",
+              "type": "string",
+              "enum": [
+                "all",
+                "minimal",
+                "access",
+                "data"
+              ]
+            }
+          },
+          "required": [
+            "pathId"
+          ]
+        },
+        "execution": {
+          "taskSupport": "forbidden"
+        }
+      },
+      {
+        "name": "path_ranked_search",
+        "title": "Ranked path search",
+        "description": "Search paths on Ellipsis Drive and gives the best ranking results based on text matching and popularity. Gives better results than the path_search tool but does not support paging.",
+        "inputSchema": {
+          "$schema": "http://json-schema.org/draft-07/schema#",
+          "type": "object",
+          "properties": {
+            "type": {
+              "description": "The types of paths to search for. Defaults to all path types.",
+              "type": "array",
+              "items": {
+                "type": "string",
+                "enum": [
+                  "raster",
+                  "vector",
+                  "folder",
+                  "file",
+                  "pointCloud",
+                  "bookmark"
+                ]
+              }
+            },
+            "access": {
+              "description": "The access type that you have to the path",
+              "type": "array",
+              "items": {
+                "type": "string",
+                "enum": [
+                  "public",
+                  "sharedWithMe",
+                  "myDrive",
+                  "trash",
+                  "favorites"
+                ]
+              }
+            },
+            "text": {
+              "description": "Text to search for in the metadata of a path",
+              "type": "string"
+            },
+            "hashtag": {
+              "description": "The hashtag to search for",
+              "type": "string"
+            },
+            "userId": {
+              "description": "Only return paths owned by this given user",
+              "type": "string",
+              "format": "uuid",
+              "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+            },
+            "active": {
+              "description": "Search for paths with active timestamps or not. Cannot be used when type contains either 'folder', 'file' or 'bookmark'",
+              "type": "boolean"
+            },
+            "date": {
+              "description": "The date range to search for",
+              "type": "object",
+              "properties": {
+                "dateFrom": {
+                  "type": "string",
+                  "format": "date-time",
+                  "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d(?::[0-5]\\d(?:\\.\\d+)?)?(?:Z))$"
+                },
+                "dateTo": {
+                  "type": "string",
+                  "format": "date-time",
+                  "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d(?::[0-5]\\d(?:\\.\\d+)?)?(?:Z))$"
+                }
+              }
+            },
+            "extent": {
+              "description": "The bounds to search for",
+              "type": "object",
+              "properties": {
+                "xMin": {
+                  "type": "number",
+                  "minimum": -3.4028234663852886e+38,
+                  "maximum": 3.4028234663852886e+38
+                },
+                "xMax": {
+                  "type": "number",
+                  "minimum": -3.4028234663852886e+38,
+                  "maximum": 3.4028234663852886e+38
+                },
+                "yMin": {
+                  "type": "number",
+                  "minimum": -3.4028234663852886e+38,
+                  "maximum": 3.4028234663852886e+38
+                },
+                "yMax": {
+                  "type": "number",
+                  "minimum": -3.4028234663852886e+38,
+                  "maximum": 3.4028234663852886e+38
+                }
+              },
+              "required": [
+                "xMin",
+                "xMax",
+                "yMin",
+                "yMax"
+              ]
+            },
+            "resolution": {
+              "description": "The resolution to search for in meters",
+              "type": "object",
+              "properties": {
+                "min": {
+                  "type": "number",
+                  "minimum": -3.4028234663852886e+38,
+                  "maximum": 3.4028234663852886e+38
+                },
+                "max": {
+                  "type": "number",
+                  "minimum": -3.4028234663852886e+38,
+                  "maximum": 3.4028234663852886e+38
+                }
+              }
+            },
+            "pageSize": {
+              "description": "The number of items returned",
+              "type": "integer",
+              "minimum": -2147483648,
+              "maximum": 2147483647
+            },
+            "returnType": {
+              "description": "Defines the information granularity that should be returned.\n        minimal contains the bare minimum, access also has yourAccess and driveLocation, data instead has\n        timestamp, styling, properties and bands and all has everything.",
+              "type": "string",
+              "enum": [
+                "all",
+                "minimal",
+                "access",
+                "data"
+              ]
+            }
+          }
+        },
+        "execution": {
+          "taskSupport": "forbidden"
+        }
+      },
+      {
+        "name": "path_search",
+        "title": "Search paths",
+        "description": "Search paths on Ellipsis Drive according to the given criteria",
+        "inputSchema": {
+          "$schema": "http://json-schema.org/draft-07/schema#",
+          "type": "object",
+          "properties": {
+            "type": {
+              "description": "The types of paths to search for. Defaults to all path types.",
+              "type": "array",
+              "items": {
+                "type": "string",
+                "enum": [
+                  "raster",
+                  "vector",
+                  "folder",
+                  "file",
+                  "pointCloud",
+                  "bookmark"
+                ]
+              }
+            },
+            "access": {
+              "description": "The access type that you have to the path",
+              "type": "array",
+              "items": {
+                "type": "string",
+                "enum": [
+                  "public",
+                  "sharedWithMe",
+                  "myDrive",
+                  "trash",
+                  "favorites"
+                ]
+              }
+            },
+            "text": {
+              "description": "Text to search for in the metadata of a path",
+              "type": "string"
+            },
+            "hashtag": {
+              "description": "The hashtag to search for",
+              "type": "string"
+            },
+            "userId": {
+              "description": "Only return paths owned by this given user",
+              "type": "string",
+              "format": "uuid",
+              "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+            },
+            "active": {
+              "description": "Search for paths with active timestamps or not. Cannot be used when type contains either 'folder', 'file' or 'bookmark'",
+              "type": "boolean"
+            },
+            "date": {
+              "description": "The date range to search for",
+              "type": "object",
+              "properties": {
+                "dateFrom": {
+                  "type": "string",
+                  "format": "date-time",
+                  "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d(?::[0-5]\\d(?:\\.\\d+)?)?(?:Z))$"
+                },
+                "dateTo": {
+                  "type": "string",
+                  "format": "date-time",
+                  "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d(?::[0-5]\\d(?:\\.\\d+)?)?(?:Z))$"
+                }
+              }
+            },
+            "extent": {
+              "description": "The bounds to search for",
+              "type": "object",
+              "properties": {
+                "xMin": {
+                  "type": "number",
+                  "minimum": -3.4028234663852886e+38,
+                  "maximum": 3.4028234663852886e+38
+                },
+                "xMax": {
+                  "type": "number",
+                  "minimum": -3.4028234663852886e+38,
+                  "maximum": 3.4028234663852886e+38
+                },
+                "yMin": {
+                  "type": "number",
+                  "minimum": -3.4028234663852886e+38,
+                  "maximum": 3.4028234663852886e+38
+                },
+                "yMax": {
+                  "type": "number",
+                  "minimum": -3.4028234663852886e+38,
+                  "maximum": 3.4028234663852886e+38
+                }
+              },
+              "required": [
+                "xMin",
+                "xMax",
+                "yMin",
+                "yMax"
+              ]
+            },
+            "resolution": {
+              "description": "The resolution to search for in meters",
+              "type": "object",
+              "properties": {
+                "min": {
+                  "type": "number",
+                  "minimum": -3.4028234663852886e+38,
+                  "maximum": 3.4028234663852886e+38
+                },
+                "max": {
+                  "type": "number",
+                  "minimum": -3.4028234663852886e+38,
+                  "maximum": 3.4028234663852886e+38
+                }
+              }
+            },
+            "pageStart": {
+              "description": "The start for paging. Type depends on the sorting parameter.",
+              "type": "string"
+            },
+            "pageSize": {
+              "description": "The number of items returned",
+              "type": "integer",
+              "minimum": -2147483648,
+              "maximum": 2147483647
+            },
+            "returnType": {
+              "description": "Defines the information granularity that should be returned.\n      minimal contains the bare minimum, access also has yourAccess and driveLocation, data instead has\n      timestamp, styling, properties and bands and all has everything.",
+              "type": "string",
+              "enum": [
+                "all",
+                "minimal",
+                "access",
+                "data"
+              ]
+            }
+          }
+        },
+        "execution": {
+          "taskSupport": "forbidden"
+        }
+      },
+      {
+        "name": "path_list_folder",
+        "title": "List folder",
+        "description": "Returns all layers in the given folder that you have access to.",
+        "inputSchema": {
+          "$schema": "http://json-schema.org/draft-07/schema#",
+          "type": "object",
+          "properties": {
+            "pathId": {
+              "type": "string",
+              "format": "uuid",
+              "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
+              "description": "The id of the folder"
+            },
+            "type": {
+              "description": "The types of paths to return",
+              "type": "array",
+              "items": {
+                "type": "string",
+                "enum": [
+                  "raster",
+                  "vector",
+                  "folder",
+                  "file",
+                  "pointCloud",
+                  "bookmark"
+                ]
+              }
+            },
+            "pageStart": {
+              "description": "The start for paging. Type depends on the sorting parameter.",
+              "type": "string"
+            },
+            "pageSize": {
+              "description": "The number of items returned",
+              "type": "integer",
+              "minimum": -2147483648,
+              "maximum": 2147483647
+            },
+            "includeTrashed": {
+              "description": "Whether to include trashed paths.",
+              "type": "boolean"
+            },
+            "sorting": {
+              "description": "The sorting method to use",
+              "type": "string",
+              "enum": [
+                "id",
+                "name"
+              ]
+            },
+            "returnType": {
+              "description": "Defines the information granularity that should be returned.\n      minimal contains the bare minimum, access also has yourAccess and driveLocation, data instead has\n      timestamp, styling, properties and bands and all has everything.",
+              "type": "string",
+              "enum": [
+                "all",
+                "minimal",
+                "access",
+                "data"
+              ]
+            }
+          },
+          "required": [
+            "pathId"
+          ]
+        },
+        "execution": {
+          "taskSupport": "forbidden"
+        }
+      },
+      {
+        "name": "path_raster_create_export",
+        "title": "Creates a raster export",
+        "description": "Starts a task to export a section of a raster",
+        "inputSchema": {
+          "$schema": "http://json-schema.org/draft-07/schema#",
+          "type": "object",
+          "properties": {
+            "pathId": {
+              "type": "string",
+              "format": "uuid",
+              "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
+              "description": "The id of the path"
+            },
+            "timestampId": {
+              "type": "string",
+              "format": "uuid",
+              "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
+              "description": "The id of the timestamp of the given path to create the export for"
+            },
+            "extent": {
+              "description": "The bounds to export",
+              "type": "object",
+              "properties": {
+                "xMin": {
+                  "type": "number",
+                  "minimum": -3.4028234663852886e+38,
+                  "maximum": 3.4028234663852886e+38
+                },
+                "xMax": {
+                  "type": "number",
+                  "minimum": -3.4028234663852886e+38,
+                  "maximum": 3.4028234663852886e+38
+                },
+                "yMin": {
+                  "type": "number",
+                  "minimum": -3.4028234663852886e+38,
+                  "maximum": 3.4028234663852886e+38
+                },
+                "yMax": {
+                  "type": "number",
+                  "minimum": -3.4028234663852886e+38,
+                  "maximum": 3.4028234663852886e+38
+                }
+              },
+              "required": [
+                "xMin",
+                "xMax",
+                "yMin",
+                "yMax"
+              ]
+            }
+          },
+          "required": [
+            "pathId",
+            "timestampId"
+          ]
+        },
+        "execution": {
+          "taskSupport": "forbidden"
+        }
+      },
+      {
+        "name": "path_raster_get_uploads",
+        "title": "Get raster uploads",
+        "description": "Gets the uploads of a raster timestamp",
+        "inputSchema": {
+          "$schema": "http://json-schema.org/draft-07/schema#",
+          "type": "object",
+          "properties": {
+            "pathId": {
+              "type": "string",
+              "format": "uuid",
+              "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
+              "description": "The id of the path"
+            },
+            "timestampId": {
+              "type": "string",
+              "format": "uuid",
+              "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
+              "description": "The id of the timestamp of the given path to get the uploads"
+            },
+            "pageStart": {
+              "description": "The start for paging.",
+              "type": "object",
+              "properties": {
+                "dateFrom": {
+                  "type": "string",
+                  "description": "The time to start paging from."
+                },
+                "pagingId": {
+                  "description": "The pagingId to start paging from in case dateFrom is not unique enough.",
+                  "type": "string",
+                  "format": "uuid",
+                  "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                }
+              },
+              "required": [
+                "dateFrom"
+              ]
+            },
+            "pageSize": {
+              "description": "The number of items returned",
+              "type": "integer",
+              "minimum": -2147483648,
+              "maximum": 2147483647
+            }
+          },
+          "required": [
+            "pathId",
+            "timestampId"
+          ]
+        },
+        "execution": {
+          "taskSupport": "forbidden"
+        }
+      },
+      {
+        "name": "raster_tileservice",
+        "title": "Raster tileservice",
+        "description": "Retrieves a tile of raster data",
+        "inputSchema": {
+          "$schema": "http://json-schema.org/draft-07/schema#",
+          "type": "object",
+          "properties": {
+            "pathId": {
+              "type": "string",
+              "format": "uuid",
+              "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
+              "description": "The path id of the raster"
+            },
+            "timestampId": {
+              "type": "string",
+              "format": "uuid",
+              "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
+              "description": "The timestamp id of the raster"
+            },
+            "z": {
+              "type": "integer",
+              "minimum": -2147483648,
+              "maximum": 2147483647,
+              "description": "The zoom level of the tile to retrieve"
+            },
+            "x": {
+              "type": "integer",
+              "minimum": -2147483648,
+              "maximum": 2147483647,
+              "description": "The x coordinate of the tile to retrieve"
+            },
+            "y": {
+              "type": "integer",
+              "minimum": -2147483648,
+              "maximum": 2147483647,
+              "description": "The y coordinate of the tile to retrieve"
+            },
+            "style": {
+              "description": "The id of the style or full style json",
+              "type": "string"
+            },
+            "applyStyle": {
+              "description": "Whether a style should be applied to the tile",
+              "type": "boolean"
+            }
+          },
+          "required": [
+            "pathId",
+            "timestampId",
+            "z",
+            "x",
+            "y"
+          ]
+        },
+        "execution": {
+          "taskSupport": "forbidden"
+        }
+      },
+      {
+        "name": "get_invites",
+        "title": "Get your invites to paths",
+        "description": "Returns the paths you have been invites to join and their associated access settings",
+        "inputSchema": {
+          "$schema": "http://json-schema.org/draft-07/schema#",
+          "type": "object",
+          "properties": {}
+        },
+        "execution": {
+          "taskSupport": "forbidden"
+        }
+      },
+      {
+        "name": "get_path_members",
+        "title": "Get members of path",
+        "description": "Returns the members or outstanding invites of a map",
+        "inputSchema": {
+          "$schema": "http://json-schema.org/draft-07/schema#",
+          "type": "object",
+          "properties": {
+            "pathId": {
+              "type": "string",
+              "format": "uuid",
+              "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
+              "description": "The path id of the path to get the aggregated usage for"
+            },
+            "accepted": {
+              "description": "Boolean whether to get the default accepted invites or get the outstanding invites to the path instead",
+              "type": "boolean"
+            }
+          },
+          "required": [
+            "pathId"
+          ]
+        },
+        "execution": {
+          "taskSupport": "forbidden"
+        }
+      },
+      {
+        "name": "get_aggregated_usage",
+        "title": "Get aggregated usage",
+        "description": "Returns aggregated daily usage of a path",
+        "inputSchema": {
+          "$schema": "http://json-schema.org/draft-07/schema#",
+          "type": "object",
+          "properties": {
+            "pathId": {
+              "type": "string",
+              "format": "uuid",
+              "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
+              "description": "The path id of the path to get the aggregated usage for"
+            },
+            "loggedIn": {
+              "type": "boolean",
+              "description": "Boolean whether to get the aggregated usage of all logged in users or all non logged in users"
+            }
+          },
+          "required": [
+            "pathId",
+            "loggedIn"
+          ]
+        },
+        "execution": {
+          "taskSupport": "forbidden"
+        }
+      },
+      {
+        "name": "get_map_users",
+        "title": "Get users of a path",
+        "description": "Returns the users that access the path in order of the last interaction",
+        "inputSchema": {
+          "$schema": "http://json-schema.org/draft-07/schema#",
+          "type": "object",
+          "properties": {
+            "pathId": {
+              "type": "string",
+              "format": "uuid",
+              "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
+              "description": "The path id of the path to get the users that used the path for"
+            },
+            "pageStart": {
+              "description": "The start of the retrieval based on the nextPageStart of the previous request.",
+              "type": "object",
+              "properties": {
+                "date": {
+                  "type": "string",
+                  "format": "date-time",
+                  "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d(?::[0-5]\\d(?:\\.\\d+)?)?(?:Z))$"
+                },
+                "pagingId": {
+                  "type": "string",
+                  "format": "uuid",
+                  "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                }
+              },
+              "required": [
+                "date"
+              ]
+            },
+            "pageSize": {
+              "description": "The number of users to retrieve",
+              "type": "integer",
+              "minimum": -2147483648,
+              "maximum": 2147483647
+            }
+          },
+          "required": [
+            "pathId"
+          ]
+        },
+        "execution": {
+          "taskSupport": "forbidden"
+        }
+      },
+      {
+        "name": "list_features",
+        "title": "List features",
+        "description": "Get features of a vector timestamp",
+        "inputSchema": {
+          "$schema": "http://json-schema.org/draft-07/schema#",
+          "type": "object",
+          "properties": {
+            "pathId": {
+              "type": "string",
+              "format": "uuid",
+              "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
+              "description": "The id of the vector path to get features from"
+            },
+            "timestampId": {
+              "type": "string",
+              "format": "uuid",
+              "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
+              "description": "The id of the timestamp to get features from"
+            },
+            "returnType": {
+              "description": "The return type of the feature information, default all.",
+              "type": "string",
+              "enum": [
+                "count",
+                "id",
+                "geometry",
+                "center",
+                "metadata",
+                "properties",
+                "all"
+              ]
+            },
+            "extent": {
+              "type": "object",
+              "properties": {
+                "xMin": {
+                  "type": "number",
+                  "minimum": -3.4028234663852886e+38,
+                  "maximum": 3.4028234663852886e+38
+                },
+                "xMax": {
+                  "type": "number",
+                  "minimum": -3.4028234663852886e+38,
+                  "maximum": 3.4028234663852886e+38
+                },
+                "yMin": {
+                  "type": "number",
+                  "minimum": -3.4028234663852886e+38,
+                  "maximum": 3.4028234663852886e+38
+                },
+                "yMax": {
+                  "type": "number",
+                  "minimum": -3.4028234663852886e+38,
+                  "maximum": 3.4028234663852886e+38
+                }
+              },
+              "required": [
+                "xMin",
+                "xMax",
+                "yMin",
+                "yMax"
+              ],
+              "description": "The bounds from which to retrieve features"
+            },
+            "pageStart": {
+              "description": "The start of the features based on the nextPageStart of the previous request.",
+              "type": "string",
+              "format": "uuid",
+              "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+            },
+            "pageSize": {
+              "description": "The number of features to retrieve",
+              "type": "integer",
+              "minimum": -2147483648,
+              "maximum": 2147483647
+            },
+            "maxSize": {
+              "description": "The maximum number of bytes to retrieve",
+              "type": "integer",
+              "minimum": -2147483648,
+              "maximum": 2147483647
+            },
+            "style": {
+              "description": "The id of the style to apply or a full style object. Uses the default style if omitted."
+            },
+            "applyStyle": {
+              "description": "Boolean if the geometries should be styled by the server, default true.",
+              "type": "boolean"
+            }
+          },
+          "required": [
+            "pathId",
+            "timestampId",
+            "extent"
+          ]
+        },
+        "execution": {
+          "taskSupport": "forbidden"
+        }
+      },
+      {
+        "name": "analyse_raster",
+        "title": "Analyse raster timestamp",
+        "description": "Analyses the data of raster timestamps",
+        "inputSchema": {
+          "$schema": "http://json-schema.org/draft-07/schema#",
+          "type": "object",
+          "properties": {
+            "pathId": {
+              "type": "string",
+              "format": "uuid",
+              "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
+              "description": "The id of the raster path to analyse"
+            },
+            "timestampIds": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "format": "uuid",
+                "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+              },
+              "description": "The ids of the timestamps to analyse"
+            },
+            "geometry": {
+              "type": "object",
+              "properties": {
+                "type": {
+                  "type": "string",
+                  "enum": [
+                    "Point",
+                    "MultiPoint",
+                    "LineString",
+                    "MultiLineString",
+                    "Polygon",
+                    "MultiPolygon",
+                    "GeometryCollection"
+                  ]
+                },
+                "coordinates": {
+                  "type": "array",
+                  "items": {}
+                },
+                "geometries": {
+                  "type": "array",
+                  "items": {}
+                }
+              },
+              "required": [
+                "type"
+              ],
+              "description": "Geojson of the area to analyse"
+            },
+            "approximate": {
+              "description": "Boolean whether the result should be exact or approximate based on sampling of the underlying data, default false.",
+              "type": "boolean"
+            },
+            "returnType": {
+              "description": "Analysis content to return, default statistics.",
+              "type": "string",
+              "enum": [
+                "statistics",
+                "all",
+                "withLocation",
+                "quickStatistics"
+              ]
+            },
+            "formulas": {
+              "description": "Formula to get the value of",
+              "type": "string"
+            }
+          },
+          "required": [
+            "pathId",
+            "timestampIds",
+            "geometry"
+          ]
+        },
+        "execution": {
+          "taskSupport": "forbidden"
+        }
+      },
+      {
+        "name": "path_vector_get_uploads",
+        "title": "Get vector uploads",
+        "description": "Gets the uploads of a vector timestamp",
+        "inputSchema": {
+          "$schema": "http://json-schema.org/draft-07/schema#",
+          "type": "object",
+          "properties": {
+            "pathId": {
+              "type": "string",
+              "format": "uuid",
+              "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
+              "description": "The id of the path"
+            },
+            "timestampId": {
+              "type": "string",
+              "format": "uuid",
+              "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
+              "description": "The id of the timestamp of the given path to get the uploads"
+            },
+            "pageStart": {
+              "description": "The start for paging.",
+              "type": "object",
+              "properties": {
+                "dateFrom": {
+                  "type": "string",
+                  "description": "The time to start paging from."
+                },
+                "pagingId": {
+                  "description": "The pagingId to start paging from in case dateFrom is not unique enough.",
+                  "type": "string",
+                  "format": "uuid",
+                  "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                }
+              },
+              "required": [
+                "dateFrom"
+              ]
+            },
+            "pageSize": {
+              "description": "The number of items returned",
+              "type": "integer",
+              "minimum": -2147483648,
+              "maximum": 2147483647
+            }
+          },
+          "required": [
+            "pathId",
+            "timestampId"
+          ]
+        },
+        "execution": {
+          "taskSupport": "forbidden"
+        }
+      },
+      {
+        "name": "user_list_root",
+        "title": "User list root",
+        "description": "Lists paths in the given root directory of the authenticated user",
+        "inputSchema": {
+          "$schema": "http://json-schema.org/draft-07/schema#",
+          "type": "object",
+          "properties": {
+            "root": {
+              "default": "myDrive",
+              "description": "The root directories to list",
+              "type": "string",
+              "enum": [
+                "myDrive",
+                "sharedWithMe",
+                "trash",
+                "favorites"
+              ]
+            },
+            "type": {
+              "default": [
+                "raster",
+                "vector"
+              ],
+              "description": "The types of paths to return",
+              "type": "array",
+              "items": {
+                "type": "string",
+                "enum": [
+                  "raster",
+                  "vector",
+                  "folder",
+                  "file",
+                  "pointCloud",
+                  "bookmark"
+                ]
+              }
+            },
+            "pageStart": {
+              "description": "The start for paging. Type depends on the sorting parameter.",
+              "type": "string"
+            },
+            "pageSize": {
+              "description": "The number of items returned",
+              "type": "integer",
+              "minimum": -2147483648,
+              "maximum": 2147483647
+            },
+            "sorting": {
+              "default": "name",
+              "description": "The sorting method to use",
+              "type": "string",
+              "enum": [
+                "id",
+                "name"
+              ]
+            },
+            "returnType": {
+              "description": "Defines the information granularity that should be returned.\n      minimal contains the bare minimum, access also has yourAccess and driveLocation, data instead has\n      timestamp, styling, properties and bands and all has everything.",
+              "type": "string",
+              "enum": [
+                "all",
+                "minimal",
+                "access",
+                "data"
+              ]
+            }
+          }
+        },
+        "execution": {
+          "taskSupport": "forbidden"
+        }
+      },
+      {
+        "name": "path_vector_create_export",
+        "title": "Creates a vector export",
+        "description": "Starts a task to export a section of a vector",
+        "inputSchema": {
+          "$schema": "http://json-schema.org/draft-07/schema#",
+          "type": "object",
+          "properties": {
+            "pathId": {
+              "type": "string",
+              "format": "uuid",
+              "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
+              "description": "The id of the path"
+            },
+            "timestampId": {
+              "type": "string",
+              "format": "uuid",
+              "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
+              "description": "The id of the timestamp of the given path to create the export for"
+            },
+            "extent": {
+              "description": "The bounds to export",
+              "type": "object",
+              "properties": {
+                "xMin": {
+                  "type": "number",
+                  "minimum": -3.4028234663852886e+38,
+                  "maximum": 3.4028234663852886e+38
+                },
+                "xMax": {
+                  "type": "number",
+                  "minimum": -3.4028234663852886e+38,
+                  "maximum": 3.4028234663852886e+38
+                },
+                "yMin": {
+                  "type": "number",
+                  "minimum": -3.4028234663852886e+38,
+                  "maximum": 3.4028234663852886e+38
+                },
+                "yMax": {
+                  "type": "number",
+                  "minimum": -3.4028234663852886e+38,
+                  "maximum": 3.4028234663852886e+38
+                }
+              },
+              "required": [
+                "xMin",
+                "xMax",
+                "yMin",
+                "yMax"
+              ]
+            }
+          },
+          "required": [
+            "pathId",
+            "timestampId"
+          ]
+        },
+        "execution": {
+          "taskSupport": "forbidden"
+        }
+      },
+      {
+        "name": "features_by_extent",
+        "title": "Get features by extent",
+        "description": "Get features of a vector timestamp by extent",
+        "inputSchema": {
+          "$schema": "http://json-schema.org/draft-07/schema#",
+          "type": "object",
+          "properties": {
+            "pathId": {
+              "type": "string",
+              "format": "uuid",
+              "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
+              "description": "The id of the vector path to get features from"
+            },
+            "timestampId": {
+              "type": "string",
+              "format": "uuid",
+              "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
+              "description": "The id of the timestamp to get features from"
+            },
+            "returnType": {
+              "description": "The return type of the feature information, default all.",
+              "type": "string",
+              "enum": [
+                "count",
+                "id",
+                "geometry",
+                "center",
+                "metadata",
+                "properties",
+                "all"
+              ]
+            },
+            "extent": {
+              "type": "object",
+              "properties": {
+                "xMin": {
+                  "type": "number",
+                  "minimum": -3.4028234663852886e+38,
+                  "maximum": 3.4028234663852886e+38
+                },
+                "xMax": {
+                  "type": "number",
+                  "minimum": -3.4028234663852886e+38,
+                  "maximum": 3.4028234663852886e+38
+                },
+                "yMin": {
+                  "type": "number",
+                  "minimum": -3.4028234663852886e+38,
+                  "maximum": 3.4028234663852886e+38
+                },
+                "yMax": {
+                  "type": "number",
+                  "minimum": -3.4028234663852886e+38,
+                  "maximum": 3.4028234663852886e+38
+                }
+              },
+              "required": [
+                "xMin",
+                "xMax",
+                "yMin",
+                "yMax"
+              ],
+              "description": "The bounds from which to retrieve features"
+            },
+            "pageStart": {
+              "description": "The start of the features based on the nextPageStart of the previous request.",
+              "type": "object",
+              "properties": {
+                "featureId": {
+                  "type": "string",
+                  "format": "uuid",
+                  "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                },
+                "value": {}
+              },
+              "required": [
+                "featureId"
+              ]
+            },
+            "pageSize": {
+              "description": "The number of features to retrieve",
+              "type": "integer",
+              "minimum": -2147483648,
+              "maximum": 2147483647
+            },
+            "maxSize": {
+              "description": "The maximum number of bytes to retrieve",
+              "type": "integer",
+              "minimum": -2147483648,
+              "maximum": 2147483647
+            },
+            "style": {
+              "description": "The id of the style to apply or a full style object. Uses the default style if omitted."
+            },
+            "applyStyle": {
+              "description": "Boolean if the geometries should be styled by the server, default true.",
+              "type": "boolean"
+            }
+          },
+          "required": [
+            "pathId",
+            "timestampId",
+            "extent"
+          ]
+        },
+        "execution": {
+          "taskSupport": "forbidden"
+        }
+      },
+      {
+        "name": "location_vector",
+        "title": "Get vector location",
+        "description": "Get features at a location of a vector timestamp",
+        "inputSchema": {
+          "$schema": "http://json-schema.org/draft-07/schema#",
+          "type": "object",
+          "properties": {
+            "pathId": {
+              "type": "string",
+              "format": "uuid",
+              "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
+              "description": "The id of the vector path to get features of"
+            },
+            "timestampId": {
+              "type": "string",
+              "format": "uuid",
+              "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
+              "description": "The id of the timestamp to get features of"
+            },
+            "locations": {
+              "type": "array",
+              "items": {
+                "type": "array",
+                "items": {
+                  "type": "number",
+                  "minimum": -3.4028234663852886e+38,
+                  "maximum": 3.4028234663852886e+38
+                }
+              },
+              "description": "Long lat pairs of coordinates to get features on"
+            }
+          },
+          "required": [
+            "pathId",
+            "timestampId",
+            "locations"
+          ]
+        },
+        "execution": {
+          "taskSupport": "forbidden"
+        }
+      }
+    ]
+  }
+}
