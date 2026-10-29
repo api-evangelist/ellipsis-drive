@@ -64,6 +64,108 @@
 > Full detail: **[Where this data comes from](https://apievangelist.com/about/where-our-data-comes-from)**
 <!-- API-EVANGELIST-PROVENANCE:END -->
 
-Ellipsis Drive is a company surfaced as a portfolio company of techstars and added to the API Evangelist network as a stub for enrichment. This profile is a lead awaiting the enrichment pipeline.
+Ellipsis Drive is a cloud-native spatial data management platform that lets teams upload, store, process, share, and serve raster, vector, and 3D point-cloud geospatial data through a single interoperable interface. Uploaded files are automatically processed into high-performance Tile Pyramid Archives (rasters) and Paged Vector Tiles (vectors) and served through standard OGC protocols (WMS, WMTS, WFS, WCS, XYZ, and vector tiles) alongside a REST API v3 with Bearer-token and OAuth2 authorization. Official SDKs and integrations cover Python, R, and JavaScript, plus plugins for QGIS, ArcGIS (JS, Pro, and Server), Mapbox GL, Leaflet, React-Leaflet, and Power BI. The platform offers storage-based pricing, license-free data sharing and consumption, subscriptions for selling spatial data, and both instant SaaS and private self-hosted deployments.
 
-Backed by: techstars — https://ellipsis-drive.com/
+**Areas:** Company · Geospatial · Spatial Data · GIS · Mapping · Data Management · Raster · Vectors · OGC · Cloud Storage · Remote Sensing
+
+## Ellipsis Drive on APIs.io
+
+Everything profiled for Ellipsis Drive is published on APIs.io rather than in this repository. Start at the provider page — **[apis.io/providers/ellipsis-drive/](https://apis.io/providers/ellipsis-drive/)** — or go straight to one of the APIs or properties below.
+
+### APIs (1)
+
+- [Ellipsis Drive API v3](https://apis.io/apis/ellipsis-drive/ellipsis-drive-api-v3/) — The Ellipsis Drive API v3 provides programmatic access to manage, use, and integrate spatial data: accounts and organizations, users, folders/paths, maps,…
+
+### Published properties
+
+Each property below is a page on APIs.io carrying the machine-readable artifact and what it says.
+
+#### MCP servers (1)
+
+Model Context Protocol servers that expose the API to agents.
+
+- [ellipsis-drive](https://apis.io/servers/ellipsis-drive/ellipsis-drive/)
+
+#### Security (2)
+
+Authentication, trust centre, and vulnerability disclosure.
+
+- [Ellipsis Drive Authentication](https://apis.io/security/ellipsis-drive/ellipsis-drive-authentication/)
+- [Ellipsis Drive Domain Security](https://apis.io/security/ellipsis-drive/ellipsis-drive-domain-security/)
+
+#### OAuth scopes (1)
+
+The permissions the API asks for.
+
+- [Ellipsis Drive Scopes](https://apis.io/scopes/ellipsis-drive/ellipsis-drive-scopes/)
+
+## Where to find this API
+
+Links to the company's own pages. This repository publishes no copy of their specifications — the canonical document is theirs and lives at the URLs below.
+
+- [Website](https://ellipsis-drive.com/)
+- [Documentation](https://docs.ellipsis-drive.com/)
+- [Getting started](https://docs.ellipsis-drive.com/getting-started/quick-start)
+- [API reference](https://docs.ellipsis-drive.com/developers/api-v3)
+- [Pricing](https://ellipsis-drive.com/getting-started/)
+- [Sign up](https://app.ellipsis-drive.com/register)
+- [Support](https://ellipsis-drive.com/contact/)
+- [Blog](https://ellipsis-drive.com/blogs/)
+- [Terms of service](https://ellipsis-drive.com/terms/)
+- [Privacy policy](https://ellipsis-drive.com/privacy/)
+- [GitHub](https://github.com/ellipsis-drive)
+
+## API Evangelist rating
+
+**Kin Score 33.4** — thin · rubric 0.25.0 · scored 2026-10-23
+
+| Facet | Score |
+|---|---|
+| Discoverability | 75.0 |
+| Contract quality | 0.0 |
+| Contract governance | 18.2 |
+| Operational transparency | 2.6 |
+| Developer ergonomics | 64.3 |
+| Access clarity | 38.2 |
+
+**Agent readiness 11.2** — agent-aware
+
+| Agent-readiness dimension | Result |
+|---|---|
+| Spec Presence | — |
+| Agentic Access | — |
+| Reversibility Documented | — |
+| MCP Server | verified |
+| Auth Clarity | bearer (partial credit) |
+| Idempotency | — |
+| Error Semantics | — |
+| OpenAPI Examples | — |
+| Rate Limit Signal | — |
+| Event Surface Described | — |
+| Agent Skills | — |
+| Well Known Catalog | — |
+| Consent Identity | — |
+| Agent Card | — |
+| Dry Run Mode | — |
+| Delegated Identity | — |
+| Protected Resource Metadata | — |
+| Dynamic Client Registration | — |
+| Agentic Commerce | — |
+| Pagination Ratio | na |
+| Operation Distinctiveness | na |
+
+**Regulatory alignment 34.3** — Horizontal (data, software, accessibility, platform)
+
+The rubric is published at [github.com/api-evangelist/kin-score](https://github.com/api-evangelist/kin-score). The per-check breakdown behind these numbers — which checks were earned, partial or missed — along with score history and how this provider compares to its peers, is available at [apis.io/providers/ellipsis-drive/](https://apis.io/providers/ellipsis-drive/).
+
+## How this profile is made
+
+API Evangelist profiles a company's public API surface the way a developer would find it: the website, developer portal and documentation, the specifications it publishes, its public repositories, and its pricing, status and changelog pages. From that it derives the properties above — contracts split per API, workflows, schemas, collections, governance rules, plans and rate limits — and scores them against the published [Kin Score rubric](https://github.com/api-evangelist/kin-score).
+
+The artifacts are published on [APIs.io](https://apis.io), not in this repository. This repository is the public record for Ellipsis Drive: the place to say something is wrong, missing or out of date, and to ask for a re-score or a removal.
+
+## Open an issue
+
+- **Something about this listing** — a wrong description, a missing API, a stale artifact or a question about the rating: [open an issue on this repository](https://github.com/api-evangelist/ellipsis-drive/issues/new).
+- **A new API, or one that is not in the catalog yet** — [submit it on APIs.io](https://apis.io/add/).
+- **Anything else** — [the APIs.io inbox](https://github.com/api-search/inbox/issues/new) or [info@apievangelist.com](mailto:info@apievangelist.com).
